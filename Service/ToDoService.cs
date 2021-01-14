@@ -7,14 +7,19 @@ namespace IIS.Service
 {
 	public class ToDoService
 	{
-        private string ConnectionString = @"Server=tcp:lasse.database.windows.net,1433;Initial Catalog=ToDoList;Persist Security Info=False;User ID=lg;Password=Lasse1234;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+        private readonly string _connectionString;
+
+        public ToDoService(DatabaseOptions options)
+        {
+	        _connectionString = options.ConnectionString;
+        }
 
         public List<ToDoModel> GetAllTodos()
         {
             string queryString = "Select * from dbo.ToDoTable";
             List<ToDoModel> todoList = new List<ToDoModel>();
 
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 SqlCommand command = new SqlCommand(queryString, connection);
                 command.Connection.Open();
@@ -42,7 +47,7 @@ namespace IIS.Service
         {
             string postString = "Insert dbo.ToDoTable (Content, IsDone) Values (@Content, @IsDone); Select SCOPE_IDENTITY()";
 
-            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 SqlCommand cmd = new SqlCommand(postString, conn);
 
@@ -67,7 +72,7 @@ namespace IIS.Service
         {
             string queryString = "Update dbo.ToDoTable set Content=@Content, IsDone=@IsDone where ToDoId=@Id";
 
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 SqlCommand command = new SqlCommand(queryString, connection);
                 command.Parameters.AddWithValue("@Content", todo.Content);

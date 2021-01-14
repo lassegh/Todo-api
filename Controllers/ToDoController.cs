@@ -9,7 +9,12 @@ namespace IIS.Controllers
     [ApiController]
     public class ToDoController : ControllerBase
     {
-        private ToDoService _service = new ToDoService();
+	    private readonly ToDoService _service;
+
+	    public ToDoController(ToDoService service)
+	    {
+		    _service = service;
+	    }
 
         /// <summary>
         /// Get all ToDos
